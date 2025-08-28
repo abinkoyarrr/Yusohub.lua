@@ -1,454 +1,224 @@
 loadstring([[
 local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-local RS = game:GetService("RunService")
-local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
--- Main ScreenGui
-local gui = Instance.new("ScreenGui", playerGui)
-gui.ResetOnSpawn = false
+-- GUI oluştur
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "YusoHubGUI"
 
--- Background Frame (Türk Bayrağı)
-local main = Instance.new("Frame", gui)
-main.Size = UDim2.new(0,600,0,400)
-main.Position = UDim2.new(0.5,0,0.5,0)
-main.AnchorPoint = Vector2.new(0.5,0.5)
-main.BackgroundColor3 = Color3.fromRGB(255,0,0)
-Instance.new("UICorner", main).CornerRadius = UDim.new(0,15)
+-- Yükleniyor frame
+local loadingFrame = Instance.new("Frame", gui)
+loadingFrame.Size = UDim2.new(0,300,0,120)
+loadingFrame.Position = UDim2.new(0.5,-150,0.5,-60)
+loadingFrame.BackgroundColor3 = Color3.fromRGB(50,50,50)
+local frameCorner = Instance.new("UICorner", loadingFrame)
+frameCorner.CornerRadius = UDim.new(0,50)
 
--- Beyaz ay-yıldız
-local star = Instance.new("ImageLabel", main)
-star.Size = UDim2.new(0,200,0,200)
-star.Position = UDim2.new(0.5,-100,0.5,-100)
-star.BackgroundTransparency = 1
-star.Image = "rbxassetid://8825213270" -- Türk bayrağı ay-yıldız resmi
-star.ScaleType = Enum.ScaleType.Fit
+local loadingLabel = Instance.new("TextLabel", loadingFrame)
+loadingLabel.Size = UDim2.new(1,0,0,50)
+loadingLabel.Position = UDim2.new(0,0,0,10)
+loadingLabel.BackgroundTransparency = 1
+loadingLabel.Text = "Yükleniyor..."
+loadingLabel.Font = Enum.Font.GothamBold
+loadingLabel.TextSize = 24
+loadingLabel.TextXAlignment = Enum.TextXAlignment.Center
+loadingLabel.TextYAlignment = Enum.TextYAlignment.Center
+loadingLabel.TextColor3 = Color3.fromRGB(255,255,255)
 
--- Title
-local title = Instance.new("TextLabel", main)
-title.Text = "Yuso Hub"
-title.Size = UDim2.new(1,0,0,50)
-title.Position = UDim2.new(0,0,0,10)
-title.BackgroundTransparency = 1
-title.TextColor3 = Color3.fromRGB(255,255,255)
-title.Font = Enum.Font.GothamBold
-title.TextScaled = true
+local subLabel = Instance.new("TextLabel", loadingFrame)
+subLabel.Size = UDim2.new(1,0,0,40)
+subLabel.Position = UDim2.new(0,0,0,60)
+subLabel.BackgroundTransparency = 1
+subLabel.Text = "Berat İyi Günler Diler"
+subLabel.Font = Enum.Font.GothamBold
+subLabel.TextSize = 20
+subLabel.TextXAlignment = Enum.TextXAlignment.Center
+subLabel.TextYAlignment = Enum.TextYAlignment.Center
 
--- Credits
-local credit = Instance.new("TextLabel", main)
-credit.Text = "Made by: OWNEROFWORLDXD"
-credit.Size = UDim2.new(1,0,0,30)
-credit.Position = UDim2.new(0,0,1,-40)
-credit.BackgroundTransparency = 1
-credit.TextColor3 = Color3.fromRGB(255,255,255)
-credit.Font = Enum.Font.Gotham
-credit.TextScaled = true
-
--- Close Button
-local close = Instance.new("TextButton", main)
-close.Text = "X"
-close.Size = UDim2.new(0,35,0,35)
-close.Position = UDim2.new(1,-50,0,10)
-close.BackgroundColor3 = Color3.fromRGB(200,0,0)
-close.TextColor3 = Color3.fromRGB(255,255,255)
-Instance.new("UICorner", close).CornerRadius = UDim.new(0,8)
-close.MouseButton1Click:Connect(function()
-    gui:Destroy()
-end)
-
--- Minimize Button
-local minimize = Instance.new("TextButton", main)
-minimize.Text = "-"
-minimize.Size = UDim2.new(0,35,0,35)
-minimize.Position = UDim2.new(1,-90,0,10)
-minimize.BackgroundColor3 = Color3.fromRGB(50,50,50)
-minimize.TextColor3 = Color3.fromRGB(255,255,255)
-Instance.new("UICorner", minimize).CornerRadius = UDim.new(0,8)
-
-local logo = Instance.new("TextButton", gui)
-logo.Text = "Yuso Hub"
-logo.Size = UDim2.new(0,60,0,60)
-logo.Position = UDim2.new(0,10,0,10)
-logo.BackgroundColor3 = Color3.fromRGB(28,28,28)
-logo.TextColor3 = Color3.fromRGB(255,255,255)
-logo.Font = Enum.Font.GothamBold
-logo.TextScaled = true
-logo.Visible = false
-Instance.new("UICorner", logo).CornerRadius = UDim.new(1,0)
-
-minimize.MouseButton1Click:Connect(function()
-    main.Visible=false
-    logo.Visible=true
-end)
-logo.MouseButton1Click:Connect(function()
-    main.Visible=true
-    logo.Visible=false
-end)
-
--- Home Buttons
-local buttons = {"Teleport","Speed","Jump","Fly","Infinite Yield"}
-local yPos = 80
-for i,name in ipairs(buttons) do
-    local btn = Instance.new("TextButton", main)
-    btn.Text = name
-    btn.Size = UDim2.new(0,200,0,50)
-    btn.Position = UDim2.new(0,20,0,yPos)
-    btn.BackgroundColor3 = Color3.fromRGB(100,150,255)
-    btn.TextColor3 = Color3.fromRGB(255,255,255)
-    btn.Font = Enum.Font.GothamBold
-    btn.TextScaled = true
-    local corner = Instance.new("UICorner", btn)
-    corner.CornerRadius = UDim.new(0,12)
-
-    -- Gradient + Hover
-    local grad = Instance.new("UIGradient", btn)
-    grad.Color = ColorSequence.new{ColorSequenceKeypoint.new(0,Color3.fromRGB(0,200,255)),ColorSequenceKeypoint.new(1,Color3.fromRGB(0,100,255))}
-
-    btn.MouseEnter:Connect(function()
-        grad.Color = ColorSequence.new{ColorSequenceKeypoint.new(0,Color3.fromRGB(255,200,0)),ColorSequenceKeypoint.new(1,Color3.fromRGB(255,100,0))}
-    end)
-    btn.MouseLeave:Connect(function()
-        grad.Color = ColorSequence.new{ColorSequenceKeypoint.new(0,Color3.fromRGB(0,200,255)),ColorSequenceKeypoint.new(1,Color3.fromRGB(0,100,255))}
-    end)
-
-    yPos = yPos + 60
-
-    btn.MouseButton1Click:Connect(function()
-        local char = player.Character
-        if not char then return end
-        local hum = char:FindFirstChild("Humanoid")
-        local hrp = char:FindFirstChild("HumanoidRootPart")
-        if name=="Teleport" and hrp then hrp.CFrame=CFrame.new(0,10,0) end
-        if name=="Speed" and hum then hum.WalkSpeed=50 end
-        if name=="Jump" and hum then hum.JumpPower=100 end
-        if name=="Fly" and hrp and hum then
-            local flying = true
-            hum.PlatformStand = true
-            local flyConn
-            flyConn = RS.RenderStepped:Connect(function()
-                if not flying then flyConn:Disconnect() hum.PlatformStand=false return end
-                local dir=Vector3.new()
-                if UIS:IsKeyDown(Enum.KeyCode.W) then dir=dir+workspace.CurrentCamera.CFrame.LookVector end
-                if UIS:IsKeyDown(Enum.KeyCode.S) then dir=dir-workspace.CurrentCamera.CFrame.LookVector end
-                if UIS:IsKeyDown(Enum.KeyCode.A) then dir=dir-workspace.CurrentCamera.CFrame.RightVector end
-                if UIS:IsKeyDown(Enum.KeyCode.D) then dir=dir+workspace.CurrentCamera.CFrame.RightVector end
-                if UIS:IsKeyDown(Enum.KeyCode.Space) then dir=dir+Vector3.new(0,1,0) end
-                if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir=dir-Vector3.new(0,1,0) end
-                if dir.Magnitude>0 then hrp.CFrame=hrp.CFrame+dir.Unit*0.5 end
-            end)
-        end
-        if name=="Infinite Yield" then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-        end
-    end)
-end
-
--- Characters Tab: Korblox
-local kor = Instance.new("TextButton", main)
-kor.Text="Korblox"
-kor.Size=UDim2.new(0,200,0,50)
-kor.Position=UDim2.new(0,20,0,yPos)
-kor.BackgroundColor3=Color3.fromRGB(200,100,255)
-kor.TextColor3=Color3.fromRGB(255,255,255)
-kor.Font=Enum.Font.GothamBold
-kor.TextScaled=true
-Instance.new("UICorner", kor).CornerRadius=UDim.new(0,12)
-
-kor.MouseButton1Click:Connect(function()
-    local char = player.Character
-    if not char then return end
-    local rleg = char:FindFirstChild("Right Leg") or char:FindFirstChild("RightLowerLeg")
-    if rleg then
-        rleg.MeshId = "http://www.roblox.com/asset/?id=128207411"
-        rleg.TextureID = "http://www.roblox.com/asset/?id=128207411"
+-- Rengarenk döngü
+local colors = {Color3.fromRGB(255,0,0),Color3.fromRGB(255,127,0),Color3.fromRGB(255,255,0),
+                Color3.fromRGB(0,255,0),Color3.fromRGB(0,0,255),Color3.fromRGB(75,0,130),Color3.fromRGB(139,0,255)}
+local colorIndex = 1
+local running = true
+spawn(function()
+    while running do
+        subLabel.TextColor3 = colors[colorIndex]
+        colorIndex = colorIndex + 1
+        if colorIndex > #colors then colorIndex = 1 end
+        wait(0.25)
     end
 end)
-]])title.Size = UDim2.new(1,0,0,50)
-title.Position = UDim2.new(0,0,0,10)
-title.BackgroundTransparency = 1
-title.TextColor3 = Color3.fromRGB(255,255,255)
-title.Font = Enum.Font.GothamBold
-title.TextScaled = true
 
--- Credits
-local credit = Instance.new("TextLabel", main)
-credit.Text = "Made by: OWNEROFWORLDXD"
-credit.Size = UDim2.new(1,0,0,30)
-credit.Position = UDim2.new(0,0,1,-40)
-credit.BackgroundTransparency = 1
-credit.TextColor3 = Color3.fromRGB(255,255,255)
-credit.Font = Enum.Font.Gotham
-credit.TextScaled = true
+-- Yükleme bitince GUI
+delay(2,function()
+    running = false
+    loadingFrame:Destroy()
 
--- Close Button
-local close = Instance.new("TextButton", main)
-close.Text = "X"
-close.Size = UDim2.new(0,35,0,35)
-close.Position = UDim2.new(1,-50,0,10)
-close.BackgroundColor3 = Color3.fromRGB(200,0,0)
-close.TextColor3 = Color3.fromRGB(255,255,255)
-Instance.new("UICorner", close).CornerRadius = UDim.new(0,8)
-close.MouseButton1Click:Connect(function()
-    gui:Destroy()
-    sound:Stop()
-end)
+    local frame = Instance.new("Frame", gui)
+    frame.Size = UDim2.new(0,420,0,260)
+    frame.Position = UDim2.new(0.5,-210,0.5,-130)
+    frame.BackgroundColor3 = Color3.fromRGB(38,38,42)
+    local frameCorner2 = Instance.new("UICorner", frame)
+    frameCorner2.CornerRadius = UDim.new(0,16)
+    frame.ClipsDescendants = true
 
--- Minimize Button
-local minimize = Instance.new("TextButton", main)
-minimize.Text = "-"
-minimize.Size = UDim2.new(0,35,0,35)
-minimize.Position = UDim2.new(1,-90,0,10)
-minimize.BackgroundColor3 = Color3.fromRGB(50,50,50)
-minimize.TextColor3 = Color3.fromRGB(255,255,255)
-Instance.new("UICorner", minimize).CornerRadius = UDim.new(0,8)
-
-local logo = Instance.new("TextButton", gui)
-logo.Text = "Yuso Hub"
-logo.Size = UDim2.new(0,60,0,60)
-logo.Position = UDim2.new(0,10,0,10)
-logo.BackgroundColor3 = Color3.fromRGB(28,28,28)
-logo.TextColor3 = Color3.fromRGB(255,255,255)
-logo.Font = Enum.Font.GothamBold
-logo.TextScaled = true
-logo.Visible = false
-Instance.new("UICorner", logo).CornerRadius = UDim.new(1,0)
-
-minimize.MouseButton1Click:Connect(function()
-    main.Visible=false
-    logo.Visible=true
-end)
-logo.MouseButton1Click:Connect(function()
-    main.Visible=true
-    logo.Visible=false
-end)
-
--- Home Buttons
-local buttons = {"Teleport","Speed","Jump","Fly","Infinite Yield"}
-local yPos = 80
-for i,name in ipairs(buttons) do
-    local btn = Instance.new("TextButton", main)
-    btn.Text = name
-    btn.Size = UDim2.new(0,200,0,50)
-    btn.Position = UDim2.new(0,20,0,yPos)
-    btn.BackgroundColor3 = Color3.fromRGB(100,150,255)
-    btn.TextColor3 = Color3.fromRGB(255,255,255)
-    btn.Font = Enum.Font.GothamBold
-    btn.TextScaled = true
-    local corner = Instance.new("UICorner", btn)
-    corner.CornerRadius = UDim.new(0,12)
-
-    -- Gradient + Hover
-    local grad = Instance.new("UIGradient", btn)
-    grad.Color = ColorSequence.new{ColorSequenceKeypoint.new(0,Color3.fromRGB(0,200,255)),ColorSequenceKeypoint.new(1,Color3.fromRGB(0,100,255))}
-
-    btn.MouseEnter:Connect(function()
-        grad.Color = ColorSequence.new{ColorSequenceKeypoint.new(0,Color3.fromRGB(255,200,0)),ColorSequenceKeypoint.new(1,Color3.fromRGB(255,100,0))}
-    end)
-    btn.MouseLeave:Connect(function()
-        grad.Color = ColorSequence.new{ColorSequenceKeypoint.new(0,Color3.fromRGB(0,200,255)),ColorSequenceKeypoint.new(1,Color3.fromRGB(0,100,255))}
-    end)
-
-    yPos = yPos + 60
-
-    btn.MouseButton1Click:Connect(function()
-        local char = player.Character
-        if not char then return end
-        local hum = char:FindFirstChild("Humanoid")
-        local hrp = char:FindFirstChild("HumanoidRootPart")
-        if name=="Teleport" and hrp then hrp.CFrame=CFrame.new(0,10,0) end
-        if name=="Speed" and hum then hum.WalkSpeed=50 end
-        if name=="Jump" and hum then hum.JumpPower=100 end
-        if name=="Fly" and hrp and hum then
-            local flying = true
-            hum.PlatformStand = true
-            local flyConn
-            flyConn = RS.RenderStepped:Connect(function()
-                if not flying then flyConn:Disconnect() hum.PlatformStand=false return end
-                local dir=Vector3.new()
-                if UIS:IsKeyDown(Enum.KeyCode.W) then dir=dir+workspace.CurrentCamera.CFrame.LookVector end
-                if UIS:IsKeyDown(Enum.KeyCode.S) then dir=dir-workspace.CurrentCamera.CFrame.LookVector end
-                if UIS:IsKeyDown(Enum.KeyCode.A) then dir=dir-workspace.CurrentCamera.CFrame.RightVector end
-                if UIS:IsKeyDown(Enum.KeyCode.D) then dir=dir+workspace.CurrentCamera.CFrame.RightVector end
-                if UIS:IsKeyDown(Enum.KeyCode.Space) then dir=dir+Vector3.new(0,1,0) end
-                if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir=dir-Vector3.new(0,1,0) end
-                if dir.Magnitude>0 then hrp.CFrame=hrp.CFrame+dir.Unit*0.5 end
-            end)
-        end
-        if name=="Infinite Yield" then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-        end
-    end)
-end
-]])text.BackgroundTransparency = 1
-text.Text = "Yükleniyor..."
-text.TextColor3 = Color3.fromRGB(255,255,255)
-text.Font = Enum.Font.GothamBold
-text.TextScaled = true
-
-local credit = Instance.new("TextLabel", frame)
-credit.Size = UDim2.new(1,0,0.5,0)
-credit.Position = UDim2.new(0,0,0.5,0)
-credit.BackgroundTransparency = 1
-credit.Text = "Made by: OWNEROFWORLDXD"
-credit.TextColor3 = Color3.fromRGB(255,255,255)
-credit.Font = Enum.Font.Gotham
-credit.TextScaled = true
-
-delay(5,function()
-    loadingGui:Destroy()
-
-    -- Main GUI
-    local gui = Instance.new("ScreenGui", playerGui)
-    local main = Instance.new("Frame", gui)
-    main.Size = UDim2.new(0,500,0,300)
-    main.Position = UDim2.new(0.5,0,0.5,0)
-    main.AnchorPoint = Vector2.new(0.5,0.5)
-    main.BackgroundColor3 = Color3.fromRGB(28,28,28)
-    Instance.new("UICorner", main).CornerRadius = UDim.new(0,15)
-
-    -- Title
-    local title = Instance.new("TextLabel", main)
-    title.Text = "Yuso Hub"
-    title.Size = UDim2.new(0,200,0,40)
-    title.Position = UDim2.new(0,15,0,10)
+    local title = Instance.new("TextLabel", frame)
+    title.Size = UDim2.new(0,420,0,40)
+    title.Position = UDim2.new(0,0,0,0)
     title.BackgroundTransparency = 1
+    title.Text = "Yuso Hub"
     title.TextColor3 = Color3.fromRGB(255,255,255)
     title.Font = Enum.Font.GothamBold
-    title.TextScaled = true
+    title.TextSize = 28
+    title.TextXAlignment = Enum.TextXAlignment.Center
+    title.TextYAlignment = Enum.TextYAlignment.Center
 
-    -- Close & Minimize
-    local close = Instance.new("TextButton", main)
-    close.Text = "X"
-    close.Size = UDim2.new(0,35,0,35)
-    close.Position = UDim2.new(1,-50,0,10)
-    close.BackgroundColor3 = Color3.fromRGB(200,0,0)
-    close.TextColor3 = Color3.fromRGB(255,255,255)
-    Instance.new("UICorner", close).CornerRadius = UDim.new(0,8)
+    -- Kapat ve minimize
+    local closeBtn = Instance.new("TextButton", frame)
+    closeBtn.Size = UDim2.new(0,30,0,30)
+    closeBtn.Position = UDim2.new(1,-40,0,5)
+    closeBtn.Text = "×"
+    closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    closeBtn.BackgroundColor3 = Color3.fromRGB(80,0,0)
+    closeBtn.Font = Enum.Font.GothamBold
+    closeBtn.TextScaled = true
+    local closeCorner = Instance.new("UICorner", closeBtn)
+    closeCorner.CornerRadius = UDim.new(0,8)
+    closeBtn.MouseButton1Click:Connect(function() gui:Destroy() end)
 
-    local minimize = Instance.new("TextButton", main)
-    minimize.Text = "-"
-    minimize.Size = UDim2.new(0,35,0,35)
-    minimize.Position = UDim2.new(1,-90,0,10)
-    minimize.BackgroundColor3 = Color3.fromRGB(50,50,50)
-    minimize.TextColor3 = Color3.fromRGB(255,255,255)
-    Instance.new("UICorner", minimize).CornerRadius = UDim.new(0,8)
-
-    local logo = Instance.new("TextButton", gui)
-    logo.Text = "Yuso Hub"
-    logo.Size = UDim2.new(0,60,0,60)
-    logo.Position = UDim2.new(0,10,0,10)
-    logo.BackgroundColor3 = Color3.fromRGB(28,28,28)
-    logo.TextColor3 = Color3.fromRGB(255,255,255)
-    logo.Font = Enum.Font.GothamBold
-    logo.TextScaled = true
-    logo.Visible = false
-    Instance.new("UICorner", logo).CornerRadius = UDim.new(1,0)
-
-    minimize.MouseButton1Click:Connect(function()
-        main.Visible=false
-        logo.Visible=true
-    end)
-    logo.MouseButton1Click:Connect(function()
-        main.Visible=true
-        logo.Visible=false
-    end)
-    close.MouseButton1Click:Connect(function()
-        main.Visible=false
-        logo.Visible=false
+    local minimizeBtn = Instance.new("TextButton", frame)
+    minimizeBtn.Size = UDim2.new(0,30,0,30)
+    minimizeBtn.Position = UDim2.new(1,-80,0,5)
+    minimizeBtn.Text = "-"
+    minimizeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    minimizeBtn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    minimizeBtn.Font = Enum.Font.GothamBold
+    minimizeBtn.TextScaled = true
+    local minCorner = Instance.new("UICorner", minimizeBtn)
+    minCorner.CornerRadius = UDim.new(0,8)
+    local minimized = false
+    minimizeBtn.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        frame.Size = minimized and UDim2.new(0,420,0,50) or UDim2.new(0,420,0,260)
+        for i,btn in ipairs(frame:GetChildren()) do
+            if btn:IsA("Frame") or btn:IsA("TextButton") then
+                btn.Visible = not minimized
+            end
+        end
+        title.Visible = true
+        closeBtn.Visible = true
+        minimizeBtn.Visible = true
     end)
 
-    -- Tabs
-    local tabs = {"Home","Characters","Credits"}
-    local frames = {}
-    for i,tab in ipairs(tabs) do
-        local btn = Instance.new("TextButton", main)
-        btn.Text = tab
-        btn.Size = UDim2.new(0,160,0,35)
-        btn.Position = UDim2.new(0,15+(i-1)*165,0,60)
-        btn.BackgroundColor3 = Color3.fromRGB(50,50,50)
-        btn.TextColor3 = Color3.fromRGB(255,255,255)
-        btn.Font = Enum.Font.Gotham
-        btn.TextScaled = true
-        Instance.new("UICorner", btn).CornerRadius = UDim.new(0,10)
-
-        local frame = Instance.new("ScrollingFrame", main)
-        frame.Size = UDim2.new(1,-30,1,-110)
-        frame.Position = UDim2.new(0,15,0,110)
-        frame.BackgroundColor3 = Color3.fromRGB(35,35,35)
-        frame.CanvasSize = UDim2.new(0,0,0,0)
-        frame.ScrollBarThickness = 8
-        frame.Visible = i==1
-        Instance.new("UICorner", frame).CornerRadius = UDim.new(0,10)
-        frames[tab] = frame
-
-        btn.MouseButton1Click:Connect(function()
-            for n,f in pairs(frames) do f.Visible=false end
-            frame.Visible=true
-        end)
-    end
-
-    -- Home Buttons
-    local yPos=20
-    local flyActive=false
-    local flyLoop=nil
-    local homeBtns = {"Teleport","Speed","Jump","Fly","Infinite Yield"}
-    for _,name in ipairs(homeBtns) do
-        local btn = Instance.new("TextButton", frames["Home"])
-        btn.Text=name
-        btn.Size = UDim2.new(0,300,0,50)
-        btn.Position = UDim2.new(0.5,-150,0,yPos)
-        btn.BackgroundColor3 = Color3.fromRGB(100,150,255)
+    -- Sekmeler
+    local tabs = {"Ana Sayfa","Krediler"}
+    local tabButtons = {}
+    local tabFrames = {}
+    for i, tabName in ipairs(tabs) do
+        local btn = Instance.new("TextButton", frame)
+        btn.Size = UDim2.new(0,180,0,28)
+        btn.Position = UDim2.new(0, 20 + (i-1)*200, 0, 50)
+        btn.Text = tabName
+        btn.BackgroundColor3 = Color3.fromRGB(70,70,80)
         btn.TextColor3 = Color3.fromRGB(255,255,255)
         btn.Font = Enum.Font.GothamBold
-        btn.TextScaled = true
-        Instance.new("UICorner", btn).CornerRadius = UDim.new(0,12)
-        yPos = yPos + 70
+        btn.TextSize = 16
+        local btnCorner = Instance.new("UICorner", btn)
+        btnCorner.CornerRadius = UDim.new(0,6)
+        table.insert(tabButtons, btn)
 
-        btn.MouseButton1Click:Connect(function()
-            local char = player.Character
-            if not char then return end
-            local hum = char:FindFirstChild("Humanoid")
-            local hrp = char:FindFirstChild("HumanoidRootPart")
-            if name=="Teleport" and hrp then hrp.CFrame=CFrame.new(0,10,0) end
-            if name=="Speed" and hum then hum.WalkSpeed=50 end
-            if name=="Jump" and hum then hum.JumpPower=100 end
-            if name=="Fly" and hrp and hum then
-                if flyActive then flyActive=false if flyLoop then flyLoop:Disconnect() end hum.PlatformStand=false
-                else
-                    flyActive=true
-                    hum.PlatformStand=true
-                    flyLoop=RS.RenderStepped:Connect(function()
-                        local dir=Vector3.new()
-                        if UIS:IsKeyDown(Enum.KeyCode.W) then dir=dir+workspace.CurrentCamera.CFrame.LookVector end
-                        if UIS:IsKeyDown(Enum.KeyCode.S) then dir=dir-workspace.CurrentCamera.CFrame.LookVector end
-                        if UIS:IsKeyDown(Enum.KeyCode.A) then dir=dir-workspace.CurrentCamera.CFrame.RightVector end
-                        if UIS:IsKeyDown(Enum.KeyCode.D) then dir=dir+workspace.CurrentCamera.CFrame.RightVector end
-                        if UIS:IsKeyDown(Enum.KeyCode.Space) then dir=dir+Vector3.new(0,1,0) end
-                        if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir=dir-Vector3.new(0,1,0) end
-                        if dir.Magnitude>0 then hrp.CFrame=hrp.CFrame+dir.Unit*0.5 end
-                    end)
-                end
-            end
-            if name=="Infinite Yield" then
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-            end
-        end)
+        local tabFrame = Instance.new("Frame", frame)
+        tabFrame.Size = UDim2.new(1,-40,1,-100)
+        tabFrame.Position = UDim2.new(0,20,0,90)
+        tabFrame.BackgroundTransparency = 1
+        tabFrame.Visible = (i==1)
+        table.insert(tabFrames, tabFrame)
     end
 
-    -- Characters Tab: Korblox
-    local kor = Instance.new("TextButton", frames["Characters"])
-    kor.Text="Korblox"
-    kor.Size=UDim2.new(0,300,0,50)
-    kor.Position=UDim2.new(0.5,-150,0,20)
-    kor.BackgroundColor3=Color3.fromRGB(200,100,255)
-    kor.TextColor3=Color3.fromRGB(255,255,255)
-    kor.Font=Enum.Font.GothamBold
-    kor.TextScaled=true
-    Instance.new("UICorner", kor).CornerRadius=UDim.new(0,12)
-    kor.MouseButton1Click:Connect(function()
-        local char=player.Character
-        if not char then return end
-        local rleg=char:FindFirstChild("Right Leg") or char:FindFirstChild("RightLowerLeg")
-        if rleg then rleg.MeshId="http://www.roblox.com/asset/?id=128207411" end
+    -- Ana Sayfa Butonları
+    local speedBtn = Instance.new("TextButton", tabFrames[1])
+    speedBtn.Size = UDim2.new(0,180,0,40)
+    speedBtn.Position = UDim2.new(0,10,0,0)
+    speedBtn.BackgroundColor3 = Color3.fromRGB(46,180,126)
+    speedBtn.Text = "Hız = 100"
+    speedBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    speedBtn.Font = Enum.Font.GothamBold
+    speedBtn.TextSize = 18
+    local btnCorner1 = Instance.new("UICorner", speedBtn)
+    btnCorner1.CornerRadius = UDim.new(0,10)
+    speedBtn.MouseButton1Click:Connect(function() player.Character:WaitForChild("Humanoid").WalkSpeed = 100 end)
+
+    local jumpBtn = Instance.new("TextButton", tabFrames[1])
+    jumpBtn.Size = UDim2.new(0,180,0,40)
+    jumpBtn.Position = UDim2.new(0,10,0,50)
+    jumpBtn.BackgroundColor3 = Color3.fromRGB(255,150,50)
+    jumpBtn.Text = "JumpPower = 100"
+    jumpBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    jumpBtn.Font = Enum.Font.GothamBold
+    jumpBtn.TextSize = 18
+    local btnCorner2 = Instance.new("UICorner", jumpBtn)
+    btnCorner2.CornerRadius = UDim.new(0,10)
+    jumpBtn.MouseButton1Click:Connect(function() player.Character:WaitForChild("Humanoid").JumpPower = 100 end)
+
+    -- Fly Butonu (mobil uyumlu)
+    local flyBtn = Instance.new("TextButton", tabFrames[1])
+    flyBtn.Size = UDim2.new(0,180,0,40)
+    flyBtn.Position = UDim2.new(0,10,0,100)
+    flyBtn.BackgroundColor3 = Color3.fromRGB(100,149,237)
+    flyBtn.Text = "Fly"
+    flyBtn.TextColor3 = Color3.fromRGB(255,255,255)
+    flyBtn.Font = Enum.Font.GothamBold
+    flyBtn.TextSize = 18
+    local btnCorner3 = Instance.new("UICorner", flyBtn)
+    btnCorner3.CornerRadius = UDim.new(0,10)
+
+    local flying = false
+    local bodyVelocity
+    local flySpeed = 50
+
+    flyBtn.MouseButton1Click:Connect(function()
+        flying = not flying
+        local hrp = player.Character:WaitForChild("HumanoidRootPart")
+        if flying then
+            flyBtn.Text = "Fly: Açık"
+            bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.MaxForce = Vector3.new(400000,400000,400000)
+            bodyVelocity.Velocity = Vector3.new(0,0,0)
+            bodyVelocity.Parent = hrp
+
+            local upDown = {Up=false,Down=false}
+            UserInputService.InputBegan:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.Space then upDown.Up = true end
+                if input.KeyCode == Enum.KeyCode.LeftShift then upDown.Down = true end
+            end)
+            UserInputService.InputEnded:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.Space then upDown.Up = false end
+                if input.KeyCode == Enum.KeyCode.LeftShift then upDown.Down = false end
+            end)
+
+            local conn
+            conn = RunService.RenderStepped:Connect(function()
+                if not flying then
+                    if bodyVelocity then bodyVelocity:Destroy() end
+                    conn:Disconnect()
+                    flyBtn.Text = "Fly"
+                else
+                    local move = Vector3.new(0,0,0)
+                    if upDown.Up then move = move + Vector3.new(0,flySpeed,0) end
+                    if upDown.Down then move = move - Vector3.new(0,flySpeed,0) end
+                    bodyVelocity.Velocity = move
+                end
+            end)
+        else
+            flyBtn.Text = "Fly"
+            if bodyVelocity then bodyVelocity:Destroy() end
+        end
     end)
-end)
+
+    -- Noclip Butonu
+    local noclipBtn = Instance.new("TextButton", tabFrames[1])
+    noclipBtn.Size = UDim2.new(0,180,0,40)
+    noclipBtn.Position = UDim2.new(0,10,0,150)
+    noclipBtn.BackgroundColor3 = Color3.fromRGB(199,21,133)
+    noclipBtn.Text = "N
